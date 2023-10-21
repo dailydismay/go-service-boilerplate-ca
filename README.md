@@ -27,3 +27,8 @@ delivery layer (http in this example) which can be Message Broker consumer, rpc 
 ### Core
 
 Root constructors as domain errors, usecase generic definitions, validation utils, shared DTOs like pagination options, interfaces for cross-module dependencies (like logger, cryptografy etc.)
+
+## Infrastructure interface matching
+
+1. As repository interfaces are defined once in `domain layer` (NOT in go-way like define dependency interface above the constructor and mock it, which causes code duplication and inconsistency)
+2. Infrastructure implementation constructor signature defines return type as `domain repository interface`. This won't allow you to compile code when you change domain intefaces signature and will certainly show, where is implementation of domain interface. (This gives low treshold to new code contributers and takes less time to understand architecture)
