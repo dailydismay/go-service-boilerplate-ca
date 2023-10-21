@@ -1,6 +1,6 @@
 # Getting started
 
-To run this app, execute `docker-compose -f docker-compose.dev.yaml up -d`
+To run this app, execute `docker-compose -f ./deploy/dev/docker-compose.dev.yaml up -d`
 
 Then execute `cmd/service` entrypoint.
 
