@@ -2,33 +2,36 @@
 
 To run this app, execute `docker-compose -f ./deploy/dev/docker-compose.dev.yaml up -d`
 
-Then execute `cmd/service` entrypoint.
+Then run the cmd/service entrypoint.
 
 # Service Modules
 
 ### Application
 
-UseCases are placed here. For example `/auth/login/login.go`
+The UseCases and their implementations are placed here. For example, `/auth/login/login.go.`
 
-Paths are built following Screamin Architecture.
+Paths are built following the Screaming Architecture.
 
 ### Domain
 
-Entity, VO, Aggregate Root and Domain Service Logic encapsulated layer. Provides Repository(Gateway/Provider) interface definition
+This layer encapsulates the Entity, VO, Aggregate Root, and Domain Service Logic. It provides the definition of the Repository (Gateway/Provider) interfaces.
 
 ### Infrastructure
 
-Includes repository implementation (postgres in this example), crosscutting(shared) client constructors.
+This layer contains the implementation of the repositories from the domain (using Postgres in this example), as well as crosscutting (shared) client packages.
 
 ### Interface
 
-delivery layer (http in this example) which can be Message Broker consumer, rpc servcr implementation etc.
+This is the delivery layer that can include Message Broker consumers, gRPC, GraphQL servers, etc.
 
 ### Core
 
-Root constructors as domain errors, usecase generic definitions, validation utils, shared DTOs like pagination options, interfaces for cross-module dependencies (like logger, cryptografy etc.)
+This includes base definitions such as domain errors, usecase or entity base, validation utils, shared DTOs (pagination parameters/results), constants, and interfaces for cross-module dependencies (such as logger, cryptography, config properties, etc).
 
 ## Infrastructure interface matching
 
-1. As repository interfaces are defined once in `domain layer` (NOT in go-way like define dependency interface above the constructor and mock it, which causes code duplication and inconsistency)
-2. Infrastructure implementation constructor signature defines return type as `domain repository interface`. This won't allow you to compile code when you change domain intefaces signature and will certainly show, where is implementation of domain interface. (This gives low treshold to new code contributers and takes less time to understand architecture)
+The Go way usually tells us to define the dependency interface above the unit constructor and mocking in each module which depends on it. _It causes code duplication and inconsistency._
+
+**Since the repository interfaces are defined once in the domain layer, the problem is solved.**
+
+**The infrastructure implementation constructor signature must define the return type as the domain repository interface.** This ensures that the code will not compile if there are changes in the domain interface signatures, and it clearly indicates the location of the implementation of the domain interface. This approach makes it easier for new code contributors to get started and reduces the time required to understand the architecture.
