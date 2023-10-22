@@ -59,10 +59,5 @@ func (b *HttpErrorBuilder) Detail(k, v string) *HttpErrorBuilder {
 
 func AsHttpError(err error) (*HttpError, bool) {
 	var e *HttpError
-
-	if errors.As(err, &e) {
-		return e, true
-	}
-
-	return nil, false
+	return e, errors.As(err, &e)
 }
