@@ -2,10 +2,12 @@ package pgsql
 
 import (
 	"authsvc/internal/domain/session"
+	"authsvc/internal/infrastructure/tx/pgsqltx"
 
 	"context"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/pkg/errors"
 )
 
 type repo struct {
@@ -16,16 +18,17 @@ func New(db *sqlx.DB) session.Repository {
 	return &repo{db}
 }
 
-/*
-I simplified this part but I suggest placing an extra package QUERIES WITH:
-- squirrel query builder
-- database schema constants (such as tables)
-*/
-func (r *repo) FindByID(ctx context.Context, rt *session.Session) error {
+func (r *repo) Save(ctx context.Context, s *session.Session) error {
+	const insertSessionQuery = `
+		INSERT INTO sessions (id, user_id, expires_at)
+		VALUES($1, $2, $3);
+	`
 
-	return nil
-}
+	q := pgsqltx.QuerierFromCtx(ctx, r.db)
+	_, err := q.ExecContext(ctx, insertSessionQuery, s.ID, s.UserID, s.ExpiresAt)
+	if err != nil {
+		return errors.Wrap(err, "failed to create session record")
+	}
 
-func (r *repo) Save(ctx context.Context, rt *session.Session) error {
 	return nil
 }
